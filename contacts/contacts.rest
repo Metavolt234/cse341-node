@@ -1,6 +1,15 @@
+### LOCAL TESTS
 ### Get all contacts
 GET http://localhost:3000/contacts
 
-### Get contact by ID
+### Get one contact
 GET http://localhost:3000/contacts/6a9eabbe51fcbdb53c195b2f
 
+### RENDER TESTS
+
+### Get all contacts - Production
+GET https://cse341-node-rse7.onrender.com/contacts
+
+
+### Get one contact - Production
+GET https://cse341-node-rse7.onrender.com/contacts/6a9ead1051fcbdb53c195b31

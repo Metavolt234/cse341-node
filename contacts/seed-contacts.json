@@ -1,0 +1,37 @@
+[
+  {
+    "firstName": "Nelson",
+    "lastName": "Tumwesige",
+    "email": "nelson.tumwesige@example.com",
+    "favoriteColor": "Blue",
+    "birthday": "2000-05-20"
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Nabirye",
+    "email": "grace.nabirye@example.com",
+    "favoriteColor": "Purple",
+    "birthday": "1999-04-15"
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Kato",
+    "email": "daniel.kato@example.com",
+    "favoriteColor": "Green",
+    "birthday": "2001-08-22"
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Achieng",
+    "email": "sarah.achieng@example.com",
+    "favoriteColor": "Orange",
+    "birthday": "1998-11-03"
+  },
+  {
+    "firstName": "Brian",
+    "lastName": "Mugisha",
+    "email": "brian.mugisha@example.com",
+    "favoriteColor": "Red",
+    "birthday": "2002-02-10"
+  }
+]

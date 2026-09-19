@@ -1,11 +1,8 @@
 @local = http://localhost:3000
 @render = https://cse341-node-rse7.onrender.com
 
-### IMPORTANT
-### Replace the ids below with real MongoDB ObjectIds from your own contacts collection.
-
-@contactId = REPLACE_WITH_CONTACT_ID
-@deleteId = REPLACE_WITH_CONTACT_ID_TO_DELETE
+@contactId = CONTACT_ID
+@deleteId = CONTACT_ID_TO_DELETE
 
 ### ---------------- LOCAL TESTS ----------------
 

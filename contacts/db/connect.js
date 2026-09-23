@@ -1,18 +1,21 @@
 const { MongoClient } = require('mongodb');
 
-let database;
 let client;
+let database;
 
 async function connectDb() {
   if (database) return database;
 
   if (!process.env.MONGODB_URI) {
-    throw new Error('MONGODB_URI is not defined. Add it to your .env file or Render environment variables.');
+    throw new Error('MONGODB_URI is not defined. Add it to .env locally or Render Environment Variables.');
   }
+
+  const dbName = process.env.DB_NAME || 'cse341_w03_project2';
 
   client = new MongoClient(process.env.MONGODB_URI);
   await client.connect();
-  database = client.db('cse341');
+  database = client.db(dbName);
+
   return database;
 }
 
@@ -26,6 +29,8 @@ function getDb() {
 async function closeDb() {
   if (client) {
     await client.close();
+    client = null;
+    database = null;
   }
 }
 

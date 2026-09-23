@@ -1,15 +1,18 @@
 {
-  "name": "contacts",
+  "name": "cse341-w03-project2",
   "version": "1.0.0",
-  "description": "",
+  "description": "CSE 341 Week 03 Project 2 Part 1 - CRUD REST API with MongoDB, validation, error handling, and Swagger documentation.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["cse341", "rest", "crud", "mongodb", "express", "swagger"],
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

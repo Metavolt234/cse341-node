@@ -1,14 +1,26 @@
 const { ObjectId } = require('mongodb');
 const { getDb } = require('../db/connect');
 
-const requiredFields = ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday'];
+const requiredFields = [
+  'firstName',
+  'lastName',
+  'email',
+  'phone',
+  'favoriteColor',
+  'birthday',
+  'city'
+];
 
 function validateContact(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return 'Request body must be a JSON object.';
+  }
+
   const missing = requiredFields.filter(
     (field) => body[field] === undefined || body[field] === null || String(body[field]).trim() === ''
   );
 
-  if (missing.length > 0) {
+  if (missing.length) {
     return `All fields are required. Missing: ${missing.join(', ')}`;
   }
 
@@ -17,8 +29,18 @@ function validateContact(body) {
     return 'Please provide a valid email address.';
   }
 
-  if (Number.isNaN(Date.parse(body.birthday))) {
-    return 'Please provide birthday as a valid date such as 2000-01-31.';
+  const phonePattern = /^\+?[0-9 ()-]{7,20}$/;
+  if (!phonePattern.test(String(body.phone).trim())) {
+    return 'Please provide a valid phone number.';
+  }
+
+  const date = new Date(`${String(body.birthday).trim()}T00:00:00Z`);
+  if (Number.isNaN(date.getTime()) || !/^\d{4}-\d{2}-\d{2}$/.test(String(body.birthday).trim())) {
+    return 'Birthday must use YYYY-MM-DD format.';
+  }
+
+  if (String(body.firstName).trim().length < 2 || String(body.lastName).trim().length < 2) {
+    return 'First name and last name must each contain at least 2 characters.';
   }
 
   return null;
@@ -28,15 +50,17 @@ function contactFromBody(body) {
   return {
     firstName: String(body.firstName).trim(),
     lastName: String(body.lastName).trim(),
-    email: String(body.email).trim(),
+    email: String(body.email).trim().toLowerCase(),
+    phone: String(body.phone).trim(),
     favoriteColor: String(body.favoriteColor).trim(),
-    birthday: String(body.birthday).trim()
+    birthday: String(body.birthday).trim(),
+    city: String(body.city).trim()
   };
 }
 
 async function getAll(req, res) {
   try {
-    const contacts = await getDb().collection('contacts').find().toArray();
+    const contacts = await getDb().collection('contacts').find().sort({ lastName: 1, firstName: 1 }).toArray();
     return res.status(200).json(contacts);
   } catch (error) {
     return res.status(500).json({ message: 'Failed to retrieve contacts.', error: error.message });
@@ -50,6 +74,7 @@ async function getSingle(req, res) {
     }
 
     const contact = await getDb().collection('contacts').findOne({ _id: new ObjectId(req.params.id) });
+
     if (!contact) {
       return res.status(404).json({ message: 'Contact not found.' });
     }
@@ -67,8 +92,14 @@ async function createContact(req, res) {
       return res.status(400).json({ message: validationError });
     }
 
-    const result = await getDb().collection('contacts').insertOne(contactFromBody(req.body));
-    return res.status(201).json({ id: result.insertedId });
+    const contact = contactFromBody(req.body);
+    const result = await getDb().collection('contacts').insertOne(contact);
+
+    return res.status(201).json({
+      message: 'Contact created successfully.',
+      id: result.insertedId,
+      contact
+    });
   } catch (error) {
     return res.status(500).json({ message: 'Failed to create contact.', error: error.message });
   }
@@ -94,7 +125,7 @@ async function updateContact(req, res) {
       return res.status(404).json({ message: 'Contact not found.' });
     }
 
-    return res.status(204).send();
+    return res.status(200).json({ message: 'Contact updated successfully.' });
   } catch (error) {
     return res.status(500).json({ message: 'Failed to update contact.', error: error.message });
   }
@@ -107,11 +138,12 @@ async function deleteContact(req, res) {
     }
 
     const result = await getDb().collection('contacts').deleteOne({ _id: new ObjectId(req.params.id) });
+
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'Contact not found.' });
     }
 
-    return res.status(204).send();
+    return res.status(200).json({ message: 'Contact deleted successfully.' });
   } catch (error) {
     return res.status(500).json({ message: 'Failed to delete contact.', error: error.message });
   }

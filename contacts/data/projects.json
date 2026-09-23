@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Community Park Cleanup",
+    "description": "Volunteers clean and restore a neighborhood park.",
+    "category": "Community Service",
+    "organization": "UnityServe Volunteers",
+    "location": "Kampala",
+    "startDate": "2026-10-10",
+    "status": "planned"
+  },
+  {
+    "name": "Food Drive",
+    "description": "Collect and distribute food packages to local families.",
+    "category": "Food Assistance",
+    "organization": "BrightFuture Builders",
+    "location": "Kampala",
+    "startDate": "2026-10-17",
+    "status": "active"
+  }
+]

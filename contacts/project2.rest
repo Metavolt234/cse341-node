@@ -1,0 +1,154 @@
+@local = http://localhost:3000
+@render = https://YOUR-APP.onrender.com
+@contactId = REPLACE_WITH_CONTACT_ID
+@projectId = REPLACE_WITH_PROJECT_ID
+
+### ==================== HOME & DOCS ====================
+
+GET {{local}}/
+
+###
+GET {{local}}/swagger.json
+
+###
+GET {{local}}/api-docs
+
+### ==================== CONTACTS ====================
+
+### Get all contacts
+GET {{local}}/contacts
+
+### Get one contact
+GET {{local}}/contacts/{{contactId}}
+
+### Create contact
+POST {{local}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Daniel",
+  "lastName": "Kato",
+  "email": "daniel.kato@example.com",
+  "phone": "+256 700 333333",
+  "favoriteColor": "Green",
+  "birthday": "2001-08-22",
+  "city": "Jinja"
+}
+
+### Validation test: missing required field
+POST {{local}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Bad",
+  "lastName": "Request",
+  "email": "not-an-email",
+  "phone": "1",
+  "favoriteColor": "Blue",
+  "birthday": "wrong-date",
+  "city": "Kampala"
+}
+
+### Update contact
+PUT {{local}}/contacts/{{contactId}}
+Content-Type: application/json
+
+{
+  "firstName": "Daniel",
+  "lastName": "Kato Updated",
+  "email": "daniel.updated@example.com",
+  "phone": "+256 700 333444",
+  "favoriteColor": "Orange",
+  "birthday": "2001-08-22",
+  "city": "Jinja"
+}
+
+### Validation test: invalid PUT
+PUT {{local}}/contacts/{{contactId}}
+Content-Type: application/json
+
+{
+  "firstName": "D",
+  "lastName": "",
+  "email": "bad-email",
+  "phone": "x",
+  "favoriteColor": "",
+  "birthday": "bad",
+  "city": ""
+}
+
+### Delete contact
+DELETE {{local}}/contacts/{{contactId}}
+
+### ==================== PROJECTS ====================
+
+### Get all projects
+GET {{local}}/projects
+
+### Get one project
+GET {{local}}/projects/{{projectId}}
+
+### Create project
+POST {{local}}/projects
+Content-Type: application/json
+
+{
+  "name": "Community Tutoring",
+  "description": "Volunteers provide after-school tutoring for students.",
+  "category": "Education & Tutoring",
+  "organization": "UnityServe Volunteers",
+  "location": "Kampala",
+  "startDate": "2026-11-01",
+  "status": "planned"
+}
+
+### Validation test: invalid project
+POST {{local}}/projects
+Content-Type: application/json
+
+{
+  "name": "No",
+  "description": "short",
+  "category": "Education",
+  "organization": "Test",
+  "location": "Kampala",
+  "startDate": "not-a-date",
+  "status": "unknown"
+}
+
+### Update project
+PUT {{local}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "name": "Community Tutoring Updated",
+  "description": "Volunteers provide updated after-school tutoring sessions.",
+  "category": "Education & Tutoring",
+  "organization": "UnityServe Volunteers",
+  "location": "Kampala",
+  "startDate": "2026-11-05",
+  "status": "active"
+}
+
+### Validation test: invalid PUT
+PUT {{local}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "short",
+  "category": "",
+  "organization": "",
+  "location": "",
+  "startDate": "bad",
+  "status": "unknown"
+}
+
+### Delete project
+DELETE {{local}}/projects/{{projectId}}
+
+### ==================== RENDER ====================
+
+GET {{render}}/contacts
+###
+GET {{render}}/projects

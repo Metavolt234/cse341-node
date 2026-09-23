@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cse341-w03-project2
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DB_NAME
+        value: cse341_w03_project2

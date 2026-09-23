@@ -234,13 +234,13 @@
         "type": "object",
         "required": ["firstName", "lastName", "email", "phone", "favoriteColor", "birthday", "city"],
         "properties": {
-          "firstName": { "type": "string", "minLength": 2, "example": "Grace" },
-          "lastName": { "type": "string", "minLength": 2, "example": "Nabirye" },
-          "email": { "type": "string", "format": "email", "example": "grace@example.com" },
-          "phone": { "type": "string", "example": "+256 700 123456" },
-          "favoriteColor": { "type": "string", "example": "Purple" },
-          "birthday": { "type": "string", "format": "date", "example": "1999-04-15" },
-          "city": { "type": "string", "example": "Kampala" }
+          "firstName": { "type": "string", "minLength": 2, "Fname": "Grace" },
+          "lastName": { "type": "string", "minLength": 2, "Lname": "Nabirye" },
+          "email": { "type": "string", "format": "email", "email": "grace@example.com" },
+          "phone": { "type": "string", "Phone": "+256 700 123456" },
+          "favoriteColor": { "type": "string", "color": "Purple" },
+          "birthday": { "type": "string", "format": "date", "birthday": "1999-04-15" },
+          "city": { "type": "string", "city": "Kampala" }
         }
       },
       "Contact": {
@@ -258,13 +258,13 @@
         "type": "object",
         "required": ["name", "description", "category", "organization", "location", "startDate", "status"],
         "properties": {
-          "name": { "type": "string", "minLength": 3, "example": "Community Park Cleanup" },
-          "description": { "type": "string", "minLength": 10, "example": "Volunteers clean and restore a neighborhood park." },
-          "category": { "type": "string", "example": "Community Service" },
-          "organization": { "type": "string", "example": "UnityServe Volunteers" },
-          "location": { "type": "string", "example": "Kampala" },
-          "startDate": { "type": "string", "format": "date", "example": "2026-10-10" },
-          "status": { "type": "string", "enum": ["planned", "active", "completed"], "example": "planned" }
+          "name": { "type": "string", "minLength": 3, "name": "Community Park Cleanup" },
+          "description": { "type": "string", "minLength": 10, "desc": "Volunteers clean and restore a neighborhood park." },
+          "category": { "type": "string", "category": "Community Service" },
+          "organization": { "type": "string", "Org": "UnityServe Volunteers" },
+          "location": { "type": "string", "location": "Kampala" },
+          "startDate": { "type": "string", "format": "date", "Sdate": "2026-10-10" },
+          "status": { "type": "string", "enum": ["planned", "active", "completed"], "status": "planned" }
         }
       },
       "Project": {

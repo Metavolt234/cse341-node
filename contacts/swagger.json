@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "CSE 341 Week 03 Project 2 API",
-    "version": "1.0.0",
-    "description": "REST API demonstrating CRUD operations, MongoDB persistence, data validation, and error handling for Contacts and Projects."
+    "title": "CSE 341 Week 04 Project 2 API",
+    "version": "2.0.0",
+    "description": "REST API demonstrating CRUD operations, MongoDB persistence, data validation, error handling, and GitHub OAuth authentication."
   },
   "servers": [
     {
@@ -24,7 +24,9 @@
   "paths": {
     "/contacts": {
       "get": {
-        "tags": ["Contacts"],
+        "tags": [
+          "Contacts"
+        ],
         "summary": "Get all contacts",
         "responses": {
           "200": {
@@ -33,22 +35,30 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Contact" }
+                  "items": {
+                    "$ref": "#/components/schemas/Contact"
+                  }
                 }
               }
             }
           },
-          "500": { "$ref": "#/components/responses/ServerError" }
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
         }
       },
       "post": {
-        "tags": ["Contacts"],
+        "tags": [
+          "Contacts"
+        ],
         "summary": "Create a contact",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ContactInput" }
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              }
             }
           }
         },
@@ -57,13 +67,24 @@
             "description": "Contact created successfully.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CreateResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/CreateResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "500": { "$ref": "#/components/responses/ServerError" }
-        }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/contacts/{id}": {
@@ -73,54 +94,98 @@
         }
       ],
       "get": {
-        "tags": ["Contacts"],
+        "tags": [
+          "Contacts"
+        ],
         "summary": "Get one contact",
         "responses": {
           "200": {
             "description": "Contact returned successfully.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Contact" }
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
         }
       },
       "put": {
-        "tags": ["Contacts"],
+        "tags": [
+          "Contacts"
+        ],
         "summary": "Replace a contact",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ContactInput" }
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Contact updated successfully." },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
-        }
+          "200": {
+            "description": "Contact updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       },
       "delete": {
-        "tags": ["Contacts"],
+        "tags": [
+          "Contacts"
+        ],
         "summary": "Delete a contact",
         "responses": {
-          "200": { "description": "Contact deleted successfully." },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
-        }
+          "200": {
+            "description": "Contact deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/projects": {
       "get": {
-        "tags": ["Projects"],
+        "tags": [
+          "Projects"
+        ],
         "summary": "Get all projects",
         "responses": {
           "200": {
@@ -129,22 +194,30 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Project" }
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  }
                 }
               }
             }
           },
-          "500": { "$ref": "#/components/responses/ServerError" }
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
         }
       },
       "post": {
-        "tags": ["Projects"],
+        "tags": [
+          "Projects"
+        ],
         "summary": "Create a project",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ProjectInput" }
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
             }
           }
         },
@@ -153,13 +226,24 @@
             "description": "Project created successfully.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CreateResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/CreateResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "500": { "$ref": "#/components/responses/ServerError" }
-        }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/projects/{id}": {
@@ -169,48 +253,148 @@
         }
       ],
       "get": {
-        "tags": ["Projects"],
+        "tags": [
+          "Projects"
+        ],
         "summary": "Get one project",
         "responses": {
           "200": {
             "description": "Project returned successfully.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Project" }
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
         }
       },
       "put": {
-        "tags": ["Projects"],
+        "tags": [
+          "Projects"
+        ],
         "summary": "Replace a project",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ProjectInput" }
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Project updated successfully." },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
-        }
+          "200": {
+            "description": "Project updated successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       },
       "delete": {
-        "tags": ["Projects"],
+        "tags": [
+          "Projects"
+        ],
         "summary": "Delete a project",
         "responses": {
-          "200": { "description": "Project deleted successfully." },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "500": { "$ref": "#/components/responses/ServerError" }
+          "200": {
+            "description": "Project deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/github": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Start GitHub OAuth login",
+        "responses": {
+          "302": {
+            "description": "Redirects to GitHub for authentication."
+          },
+          "500": {
+            "description": "OAuth is not configured."
+          }
+        }
+      }
+    },
+    "/auth/github/callback": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "GitHub OAuth callback",
+        "responses": {
+          "302": {
+            "description": "Redirects to authentication status after login."
+          }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Check login status",
+        "responses": {
+          "200": {
+            "description": "Authenticated user information."
+          },
+          "401": {
+            "description": "Not authenticated."
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Log out current user",
+        "responses": {
+          "200": {
+            "description": "Logged out successfully."
+          }
         }
       }
     }
@@ -232,48 +416,128 @@
     "schemas": {
       "ContactInput": {
         "type": "object",
-        "required": ["firstName", "lastName", "email", "phone", "favoriteColor", "birthday", "city"],
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "phone",
+          "favoriteColor",
+          "birthday",
+          "city"
+        ],
         "properties": {
-          "firstName": { "type": "string", "minLength": 2, "Fname": "Grace" },
-          "lastName": { "type": "string", "minLength": 2, "Lname": "Nabirye" },
-          "email": { "type": "string", "format": "email", "email": "grace@example.com" },
-          "phone": { "type": "string", "Phone": "+256 700 123456" },
-          "favoriteColor": { "type": "string", "color": "Purple" },
-          "birthday": { "type": "string", "format": "date", "birthday": "1999-04-15" },
-          "city": { "type": "string", "city": "Kampala" }
+          "firstName": {
+            "type": "string",
+            "minLength": 2,
+            "example": "Grace"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 2,
+            "example": "Nabirye"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "grace@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+256 700 123456"
+          },
+          "favoriteColor": {
+            "type": "string",
+            "example": "Purple"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date",
+            "example": "1999-04-15"
+          },
+          "city": {
+            "type": "string",
+            "example": "Kampala"
+          }
         }
       },
       "Contact": {
         "allOf": [
-          { "$ref": "#/components/schemas/ContactInput" },
+          {
+            "$ref": "#/components/schemas/ContactInput"
+          },
           {
             "type": "object",
             "properties": {
-              "_id": { "type": "string", "example": "66eb8c356c1344dcb86b1111" }
+              "_id": {
+                "type": "string",
+                "example": "66eb8c356c1344dcb86b1111"
+              }
             }
           }
         ]
       },
       "ProjectInput": {
         "type": "object",
-        "required": ["name", "description", "category", "organization", "location", "startDate", "status"],
+        "required": [
+          "name",
+          "description",
+          "category",
+          "organization",
+          "location",
+          "startDate",
+          "status"
+        ],
         "properties": {
-          "name": { "type": "string", "minLength": 3, "name": "Community Park Cleanup" },
-          "description": { "type": "string", "minLength": 10, "desc": "Volunteers clean and restore a neighborhood park." },
-          "category": { "type": "string", "category": "Community Service" },
-          "organization": { "type": "string", "Org": "UnityServe Volunteers" },
-          "location": { "type": "string", "location": "Kampala" },
-          "startDate": { "type": "string", "format": "date", "Sdate": "2026-10-10" },
-          "status": { "type": "string", "enum": ["planned", "active", "completed"], "status": "planned" }
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "example": "Community Park Cleanup"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "example": "Volunteers clean and restore a neighborhood park."
+          },
+          "category": {
+            "type": "string",
+            "example": "Community Service"
+          },
+          "organization": {
+            "type": "string",
+            "example": "UnityServe Volunteers"
+          },
+          "location": {
+            "type": "string",
+            "example": "Kampala"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-10"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "active",
+              "completed"
+            ],
+            "example": "planned"
+          }
         }
       },
       "Project": {
         "allOf": [
-          { "$ref": "#/components/schemas/ProjectInput" },
+          {
+            "$ref": "#/components/schemas/ProjectInput"
+          },
           {
             "type": "object",
             "properties": {
-              "_id": { "type": "string", "example": "66eb8c356c1344dcb86b2222" }
+              "_id": {
+                "type": "string",
+                "example": "66eb8c356c1344dcb86b2222"
+              }
             }
           }
         ]
@@ -281,15 +545,23 @@
       "CreateResponse": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
-          "id": { "type": "string" }
+          "message": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
         }
       },
       "Error": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
-          "error": { "type": "string" }
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
         }
       }
     },
@@ -298,7 +570,9 @@
         "description": "Validation error or invalid ObjectId.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -306,7 +580,9 @@
         "description": "Requested document was not found.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -314,9 +590,19 @@
         "description": "Server or database error.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid",
+        "description": "Session cookie created after GitHub OAuth login. Open /auth/github in the same browser before using protected endpoints."
       }
     }
   }

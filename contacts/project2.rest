@@ -3,25 +3,27 @@
 @contactId = REPLACE_WITH_CONTACT_ID
 @projectId = REPLACE_WITH_PROJECT_ID
 
-### ==================== HOME & DOCS ====================
-
+### HOME & DOCS
 GET {{local}}/
-
 ###
 GET {{local}}/swagger.json
-
 ###
 GET {{local}}/api-docs
 
-### ==================== CONTACTS ====================
+### AUTH
+# Open this URL in a browser to sign in with GitHub.
+GET {{local}}/auth/github
+###
+GET {{local}}/auth/status
+###
+GET {{local}}/auth/logout
 
-### Get all contacts
+### CONTACTS
 GET {{local}}/contacts
-
-### Get one contact
+###
 GET {{local}}/contacts/{{contactId}}
-
-### Create contact
+###
+# Protected: must be logged in
 POST {{local}}/contacts
 Content-Type: application/json
 
@@ -34,8 +36,25 @@ Content-Type: application/json
   "birthday": "2001-08-22",
   "city": "Jinja"
 }
+###
+# Protected: must be logged in
+PUT {{local}}/contacts/{{contactId}}
+Content-Type: application/json
 
-### Validation test: missing required field
+{
+  "firstName": "Daniel",
+  "lastName": "Kato Updated",
+  "email": "daniel.updated@example.com",
+  "phone": "+256 700 333444",
+  "favoriteColor": "Orange",
+  "birthday": "2001-08-22",
+  "city": "Jinja"
+}
+###
+# Protected: must be logged in
+DELETE {{local}}/contacts/{{contactId}}
+
+### CONTACT VALIDATION
 POST {{local}}/contacts
 Content-Type: application/json
 
@@ -49,46 +68,12 @@ Content-Type: application/json
   "city": "Kampala"
 }
 
-### Update contact
-PUT {{local}}/contacts/{{contactId}}
-Content-Type: application/json
-
-{
-  "firstName": "Daniel",
-  "lastName": "Kato Updated",
-  "email": "daniel.updated@example.com",
-  "phone": "+256 700 333444",
-  "favoriteColor": "Orange",
-  "birthday": "2001-08-22",
-  "city": "Jinja"
-}
-
-### Validation test: invalid PUT
-PUT {{local}}/contacts/{{contactId}}
-Content-Type: application/json
-
-{
-  "firstName": "D",
-  "lastName": "",
-  "email": "bad-email",
-  "phone": "x",
-  "favoriteColor": "",
-  "birthday": "bad",
-  "city": ""
-}
-
-### Delete contact
-DELETE {{local}}/contacts/{{contactId}}
-
-### ==================== PROJECTS ====================
-
-### Get all projects
+### PROJECTS
 GET {{local}}/projects
-
-### Get one project
+###
 GET {{local}}/projects/{{projectId}}
-
-### Create project
+###
+# Protected: must be logged in
 POST {{local}}/projects
 Content-Type: application/json
 
@@ -101,8 +86,25 @@ Content-Type: application/json
   "startDate": "2026-11-01",
   "status": "planned"
 }
+###
+# Protected: must be logged in
+PUT {{local}}/projects/{{projectId}}
+Content-Type: application/json
 
-### Validation test: invalid project
+{
+  "name": "Community Tutoring Updated",
+  "description": "Volunteers provide updated after-school tutoring sessions.",
+  "category": "Education & Tutoring",
+  "organization": "UnityServe Volunteers",
+  "location": "Kampala",
+  "startDate": "2026-11-05",
+  "status": "active"
+}
+###
+# Protected: must be logged in
+DELETE {{local}}/projects/{{projectId}}
+
+### PROJECT VALIDATION
 POST {{local}}/projects
 Content-Type: application/json
 
@@ -116,39 +118,9 @@ Content-Type: application/json
   "status": "unknown"
 }
 
-### Update project
-PUT {{local}}/projects/{{projectId}}
-Content-Type: application/json
-
-{
-  "name": "Community Tutoring Updated",
-  "description": "Volunteers provide updated after-school tutoring sessions.",
-  "category": "Education & Tutoring",
-  "organization": "UnityServe Volunteers",
-  "location": "Kampala",
-  "startDate": "2026-11-05",
-  "status": "active"
-}
-
-### Validation test: invalid PUT
-PUT {{local}}/projects/{{projectId}}
-Content-Type: application/json
-
-{
-  "name": "",
-  "description": "short",
-  "category": "",
-  "organization": "",
-  "location": "",
-  "startDate": "bad",
-  "status": "unknown"
-}
-
-### Delete project
-DELETE {{local}}/projects/{{projectId}}
-
-### ==================== RENDER ====================
-
+### RENDER
 GET {{render}}/contacts
 ###
 GET {{render}}/projects
+###
+GET {{render}}/auth/status

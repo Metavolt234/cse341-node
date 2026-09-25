@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cse341-w03-project2
+    name: cse341-w04-project2
     runtime: node
     buildCommand: npm install
     startCommand: npm start
@@ -8,4 +8,14 @@ services:
       - key: MONGODB_URI
         sync: false
       - key: DB_NAME
-        value: cse341_w03_project2
+        value: cse341_w04_project2
+      - key: SESSION_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CALLBACK_URL
+        sync: false
+      - key: NODE_ENV
+        value: production

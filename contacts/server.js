@@ -1,7 +1,9 @@
 const express = require('express');
 require('dotenv').config();
+const session = require('express-session');
 
 const { connectDb } = require('./db/connect');
+const { passport, configurePassport } = require('./auth');
 const contactsRoute = require('./routes/contacts');
 const projectsRoute = require('./routes/projects');
 const swaggerDocument = require('./swagger.json');
@@ -10,12 +12,34 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 app.use(express.json({ limit: '50kb' }));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'development-only-change-me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24
+  }
+}));
+
+configurePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'CSE 341 Week 03 Project 2 API is running.',
-    collections: ['contacts', 'projects'],
+    message: 'CSE 341 Week 04 Project 2 API is running.',
+    collections: ['contacts', 'projects', 'users'],
+    authentication: {
+      login: '/auth/github',
+      logout: '/auth/logout',
+      status: '/auth/status'
+    },
     documentation: '/api-docs',
     openapi: '/swagger.json'
   });
@@ -43,11 +67,64 @@ app.get('/api-docs', (req, res) => {
       dom_id: '#swagger-ui',
       deepLinking: true,
       displayRequestDuration: true,
-      tryItOutEnabled: true
+      tryItOutEnabled: true,
+      persistAuthorization: true
     });
   </script>
 </body>
 </html>`);
+});
+
+app.get('/auth/github',
+  (req, res, next) => {
+    if (!process.env.GITHUB_CLIENT_ID) {
+      return res.status(500).json({
+        message: 'GitHub OAuth is not configured on this server.'
+      });
+    }
+    next();
+  },
+  passport.authenticate('github', { scope: ['user:email'] })
+);
+
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/auth/status' }),
+  (req, res) => {
+    res.redirect('/auth/status');
+  }
+);
+
+app.get('/auth/status', (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({
+      authenticated: false,
+      message: 'Not logged in.'
+    });
+  }
+
+  return res.status(200).json({
+    authenticated: true,
+    user: {
+      id: req.user._id,
+      githubId: req.user.githubId,
+      username: req.user.username,
+      displayName: req.user.displayName,
+      email: req.user.email,
+      profileUrl: req.user.profileUrl
+    }
+  });
+});
+
+app.get('/auth/logout', (req, res, next) => {
+  req.logout((error) => {
+    if (error) return next(error);
+
+    req.session.destroy((sessionError) => {
+      if (sessionError) return next(sessionError);
+      res.clearCookie('connect.sid');
+      return res.status(200).json({ message: 'Logged out successfully.' });
+    });
+  });
 });
 
 app.use('/contacts', contactsRoute);

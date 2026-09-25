@@ -1,93 +1,130 @@
-# CSE 341 W03 Project 2 Part 1 — CRUD REST API
+# CSE 341 W04 Project 2 Part 2 — Authentication
 
-This project implements the Week 03 CSE 341 requirements using **Node.js, Express, and MongoDB**.
+This project extends the Week 03 CRUD REST API with **GitHub OAuth authentication**, session-based authorization, MongoDB persistence, validation, error handling, and Swagger documentation.
 
 ## Collections
 
-The API uses two MongoDB collections:
+The API uses three MongoDB collections:
 
 1. `contacts` — 7 required data fields plus MongoDB `_id`.
 2. `projects` — 7 required data fields plus MongoDB `_id`.
+3. `users` — GitHub OAuth users created when they log in.
 
-## CRUD endpoints
+## Authentication
 
-### Contacts
+Users sign in with GitHub OAuth:
 
-- `GET /contacts`
-- `GET /contacts/:id`
+- `GET /auth/github` — start GitHub login.
+- `GET /auth/github/callback` — OAuth callback.
+- `GET /auth/status` — see whether the current session is authenticated.
+- `GET /auth/logout` — log out.
+
+The server stores a GitHub user record in MongoDB. No GitHub password is stored by this application.
+
+### Protected routes
+
+The following routes require authentication:
+
+**Contacts**
 - `POST /contacts`
 - `PUT /contacts/:id`
 - `DELETE /contacts/:id`
 
-### Projects
-
-- `GET /projects`
-- `GET /projects/:id`
+**Projects**
 - `POST /projects`
 - `PUT /projects/:id`
 - `DELETE /projects/:id`
 
-## Validation
+The read-only GET routes remain available without login.
 
-Both collections validate their POST and PUT requests.
+If a protected route is called without an authenticated session, the API returns HTTP `401`.
 
-Examples of validation rules:
+## Data validation
 
-- Required fields cannot be empty.
-- Contact email must use a valid email format.
-- Contact phone must contain a valid phone pattern.
-- Contact birthday must use `YYYY-MM-DD`.
-- Project name must contain at least 3 characters.
-- Project description must contain at least 10 characters.
-- Project start date must use `YYYY-MM-DD`.
-- Project status must be `planned`, `active`, or `completed`.
+Both collections validate POST and PUT requests.
+
+Contacts:
+- All seven fields are required.
+- Email must be valid.
+- Phone must use a valid phone pattern.
+- Birthday must use `YYYY-MM-DD`.
+- First and last names must have at least two characters.
+
+Projects:
+- All seven fields are required.
+- Name must have at least three characters.
+- Description must have at least ten characters.
+- Start date must use `YYYY-MM-DD`.
+- Status must be `planned`, `active`, or `completed`.
 
 Validation failures return HTTP `400`.
 
 ## Error handling
 
-Every CRUD controller uses `try/catch` and returns appropriate HTTP status codes:
+Every CRUD controller uses `try/catch` and returns appropriate status codes:
 
 - `200` — successful GET, PUT, or DELETE.
 - `201` — successful POST.
 - `400` — validation error or invalid MongoDB ObjectId.
+- `401` — authentication required.
 - `404` — document not found.
 - `500` — database/server error.
-
-## Swagger documentation
-
-After starting the server:
-
-- Interactive documentation: `http://localhost:3000/api-docs`
-- OpenAPI JSON: `http://localhost:3000/swagger.json`
-
-Swagger UI supports **Try it out** for testing the endpoints.
 
 ## Local setup
 
 1. Install Node.js 20+.
-2. Run `npm install`.
-3. Copy `.env.example` to `.env`.
-4. Put your own MongoDB Atlas connection string into `.env`.
-5. Keep `.env` out of Git.
-6. Run `npm start`.
-7. Open `http://localhost:3000/api-docs`.
+2. Run:
 
-Example `.env`:
-
-```env
-MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@YOUR-CLUSTER.mongodb.net/?retryWrites=true&w=majority
-DB_NAME=cse341_w03_project2
-PORT=3000
+```bash
+npm install
 ```
 
-## MongoDB seed data
+3. Copy `.env.example` to `.env`.
+4. Fill in your MongoDB Atlas and GitHub OAuth values.
+5. Run:
 
-The `data/contacts.json` and `data/projects.json` files contain sample documents for manually importing into MongoDB Compass/Atlas.
+```bash
+npm start
+```
 
-## Render deployment
+6. Open:
 
-Create a new Render Web Service from the GitHub repository.
+```text
+http://localhost:3000/api-docs
+```
+
+## GitHub OAuth application
+
+Create a GitHub OAuth App in GitHub Developer Settings.
+
+For local development use:
+
+```text
+Homepage URL:
+http://localhost:3000
+
+Authorization callback URL:
+http://localhost:3000/auth/github/callback
+```
+
+Put the generated values in `.env`:
+
+```env
+GITHUB_CLIENT_ID=your_client_id
+GITHUB_CLIENT_SECRET=your_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3000/auth/github/callback
+SESSION_SECRET=use_a_long_random_secret
+```
+
+For Render, change the callback URL to your deployed domain:
+
+```text
+https://YOUR-APP.onrender.com/auth/github/callback
+```
+
+Then add the same values as Render environment variables.
+
+## Render
 
 Build command:
 
@@ -101,30 +138,56 @@ Start command:
 npm start
 ```
 
-Add these Render environment variables:
+Required Render environment variables:
 
 ```text
-MONGODB_URI=your-real-mongodb-atlas-connection-string
-DB_NAME=cse341_w03_project2
+MONGODB_URI
+DB_NAME
+SESSION_SECRET
+GITHUB_CLIENT_ID
+GITHUB_CLIENT_SECRET
+GITHUB_CALLBACK_URL
+NODE_ENV=production
 ```
 
-Do **not** put the MongoDB username/password in GitHub, README files, or JavaScript source code.
+Do not put credentials or OAuth secrets in GitHub.
 
-## Week 03 video checklist
+## Swagger
 
-For the 5–8 minute demonstration, show:
+Interactive API documentation:
 
-1. The published Render URL.
-2. Swagger documentation.
-3. GET for Contacts.
-4. POST for Contacts and the new document in MongoDB.
-5. PUT for Contacts and the changed document in MongoDB.
-6. DELETE for Contacts and confirm removal in MongoDB.
-7. GET/POST/PUT/DELETE for Projects.
-8. One invalid POST or PUT for each collection returning HTTP 400.
-9. The GitHub repository without `.env` or credentials.
-10. The Render API working outside localhost.
+```text
+http://localhost:3000/api-docs
+```
 
-## Important
+OpenAPI JSON:
 
-This Part 1 project does not include OAuth yet. Add OAuth/user management during Week 04 as required by the overall Weeks 03–04 project.
+```text
+http://localhost:3000/swagger.json
+```
+
+The Swagger document identifies POST, PUT, and DELETE operations as protected by the `connect.sid` session cookie.
+
+For the video demonstration, first open `/auth/github` in the same browser and complete GitHub login. Then return to `/api-docs` and use **Try it out** on protected endpoints. The browser session cookie is sent with same-origin Swagger requests.
+
+## Suggested 5–8 minute video
+
+1. Show the deployed Render API.
+2. Open `/api-docs`.
+3. Show the Authentication section.
+4. Open `/auth/github` and log in with GitHub.
+5. Show `/auth/status` returning `authenticated: true`.
+6. Demonstrate GET Contacts.
+7. Demonstrate POST Contacts and show the new document in MongoDB.
+8. Demonstrate PUT Contacts and show the changed document in MongoDB.
+9. Demonstrate DELETE Contacts and show the document removed.
+10. Repeat at least one CRUD operation for Projects and show the database update.
+11. Log out and demonstrate a protected POST/PUT/DELETE returning `401`.
+12. Show an invalid POST or PUT for Contacts returning `400`.
+13. Show an invalid POST or PUT for Projects returning `400`.
+14. Show MongoDB Compass with at least two collections and the collection with seven fields.
+15. Show GitHub without `.env` or secrets and show the deployed Render URL.
+
+## Security warning
+
+If a real MongoDB password was ever placed in a committed `.env` file, rotate that MongoDB credential in Atlas before submitting the repository. Keep `.env` ignored by Git.

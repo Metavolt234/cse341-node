@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "CSE 341 Week 04 Project 2 API",
-    "version": "2.0.0",
-    "description": "REST API demonstrating CRUD operations, MongoDB persistence, data validation, error handling, and GitHub OAuth authentication."
+    "title": "CSE 341 Week 05 Final Project Part 1 API",
+    "version": "1.0.0",
+    "description": "REST API with two MongoDB collections, full CRUD operations, validation, error handling, and interactive Swagger documentation."
   },
   "servers": [
     {

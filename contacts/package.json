@@ -1,7 +1,7 @@
 {
-  "name": "cse341-w04-project2",
+  "name": "cse341-w05-final-project",
   "version": "1.0.0",
-  "description": "CSE 341 Week 04 Project 2 Part 2 - CRUD REST API with GitHub OAuth authentication.",
+  "description": "CSE 341 Week 05 Final Project Part 1 - Two MongoDB collections with CRUD, validation, error handling, and Swagger API documentation.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

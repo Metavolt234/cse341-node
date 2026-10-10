@@ -1,24 +1,32 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "CSE 341 Week 05 Final Project Part 1 API",
-    "version": "1.0.0",
-    "description": "REST API with two MongoDB collections, full CRUD operations, validation, error handling, and interactive Swagger documentation."
+    "title": "CSE 341 Community Service Connect API",
+    "version": "2.0.0",
+    "description": "Week 06 API. GET, POST, PUT and DELETE are available for contacts, projects, organizations, and registrations. POST/PUT bodies are validated; all write operations require GitHub OAuth session authentication."
   },
   "servers": [
     {
       "url": "/",
-      "description": "Current server"
+      "description": "Current deployment"
     }
   ],
   "tags": [
     {
       "name": "Contacts",
-      "description": "Create and manage contact records."
+      "description": "Contact records. Required: firstName, lastName, email, phone, favoriteColor, birthday (YYYY-MM-DD), city."
     },
     {
       "name": "Projects",
-      "description": "Create and manage service project records."
+      "description": "Service projects. Required: name, description, category, organization, location, startDate (YYYY-MM-DD), status (planned, active, completed)."
+    },
+    {
+      "name": "Organizations",
+      "description": "Partner organizations. Required: name, description, contactEmail, phone, address."
+    },
+    {
+      "name": "Registrations",
+      "description": "Volunteer registrations. Required: projectId (MongoDB ObjectId), volunteerName, volunteerEmail, registrationDate (YYYY-MM-DD), status (registered, confirmed, cancelled, completed)."
     }
   ],
   "paths": {
@@ -30,20 +38,10 @@
         "summary": "Get all contacts",
         "responses": {
           "200": {
-            "description": "Contacts returned successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Contact"
-                  }
-                }
-              }
-            }
+            "description": "Records returned."
           },
           "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Server error."
           }
         }
       },
@@ -51,46 +49,46 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Create a contact",
+        "summary": "Create contact",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ContactInput"
+                "type": "object",
+                "description": "Contact records. Required: firstName, lastName, email, phone, favoriteColor, birthday (YYYY-MM-DD), city."
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Contact created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateResponse"
-                }
-              }
-            }
+            "description": "Created."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Validation error."
           },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+          "401": {
+            "description": "GitHub login required."
           }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
+        }
       }
     },
     "/contacts/{id}": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/ObjectId"
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "MongoDB ObjectId"
         }
       ],
       "get": {
@@ -100,23 +98,13 @@
         "summary": "Get one contact",
         "responses": {
           "200": {
-            "description": "Contact returned successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Contact"
-                }
-              }
-            }
+            "description": "Record returned."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Invalid ID."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Not found."
           }
         }
       },
@@ -124,61 +112,59 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Replace a contact",
+        "summary": "Update contact",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ContactInput"
+                "type": "object",
+                "description": "Contact records. Required: firstName, lastName, email, phone, favoriteColor, birthday (YYYY-MM-DD), city."
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Contact updated successfully."
+            "description": "Updated."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Not found."
           }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
+        }
       },
       "delete": {
         "tags": [
           "Contacts"
         ],
-        "summary": "Delete a contact",
-        "responses": {
-          "200": {
-            "description": "Contact deleted successfully."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
-          }
-        },
+        "summary": "Delete contact",
         "security": [
           {
-            "cookieAuth": []
+            "githubOAuth": []
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
       }
     },
     "/projects": {
@@ -189,20 +175,10 @@
         "summary": "Get all projects",
         "responses": {
           "200": {
-            "description": "Projects returned successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Project"
-                  }
-                }
-              }
-            }
+            "description": "Records returned."
           },
           "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Server error."
           }
         }
       },
@@ -210,46 +186,46 @@
         "tags": [
           "Projects"
         ],
-        "summary": "Create a project",
+        "summary": "Create project",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectInput"
+                "type": "object",
+                "description": "Service projects. Required: name, description, category, organization, location, startDate (YYYY-MM-DD), status (planned, active, completed)."
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Project created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateResponse"
-                }
-              }
-            }
+            "description": "Created."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Validation error."
           },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+          "401": {
+            "description": "GitHub login required."
           }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
+        }
       }
     },
     "/projects/{id}": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/ObjectId"
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "MongoDB ObjectId"
         }
       ],
       "get": {
@@ -259,23 +235,13 @@
         "summary": "Get one project",
         "responses": {
           "200": {
-            "description": "Project returned successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Project"
-                }
-              }
-            }
+            "description": "Record returned."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Invalid ID."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Not found."
           }
         }
       },
@@ -283,326 +249,350 @@
         "tags": [
           "Projects"
         ],
-        "summary": "Replace a project",
+        "summary": "Update project",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectInput"
+                "type": "object",
+                "description": "Service projects. Required: name, description, category, organization, location, startDate (YYYY-MM-DD), status (planned, active, completed)."
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Project updated successfully."
+            "description": "Updated."
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Not found."
           }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
+        }
       },
       "delete": {
         "tags": [
           "Projects"
         ],
-        "summary": "Delete a project",
-        "responses": {
-          "200": {
-            "description": "Project deleted successfully."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
-          }
-        },
+        "summary": "Delete project",
         "security": [
           {
-            "cookieAuth": []
+            "githubOAuth": []
           }
-        ]
-      }
-    },
-    "/auth/github": {
-      "get": {
-        "tags": [
-          "Authentication"
         ],
-        "summary": "Start GitHub OAuth login",
-        "responses": {
-          "302": {
-            "description": "Redirects to GitHub for authentication."
-          },
-          "500": {
-            "description": "OAuth is not configured."
-          }
-        }
-      }
-    },
-    "/auth/github/callback": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "GitHub OAuth callback",
-        "responses": {
-          "302": {
-            "description": "Redirects to authentication status after login."
-          }
-        }
-      }
-    },
-    "/auth/status": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Check login status",
         "responses": {
           "200": {
-            "description": "Authenticated user information."
+            "description": "Deleted."
           },
           "401": {
-            "description": "Not authenticated."
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
           }
         }
       }
     },
-    "/auth/logout": {
+    "/organizations": {
       "get": {
         "tags": [
-          "Authentication"
+          "Organizations"
         ],
-        "summary": "Log out current user",
+        "summary": "Get all organizations",
         "responses": {
           "200": {
-            "description": "Logged out successfully."
+            "description": "Records returned."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Create organization",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Partner organizations. Required: name, description, contactEmail, phone, address."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
+          }
+        }
+      }
+    },
+    "/organizations/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "MongoDB ObjectId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Get one organization",
+        "responses": {
+          "200": {
+            "description": "Record returned."
+          },
+          "400": {
+            "description": "Invalid ID."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Update organization",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Partner organizations. Required: name, description, contactEmail, phone, address."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Delete organization",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      }
+    },
+    "/registrations": {
+      "get": {
+        "tags": [
+          "Registrations"
+        ],
+        "summary": "Get all registrations",
+        "responses": {
+          "200": {
+            "description": "Records returned."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Registrations"
+        ],
+        "summary": "Create registration",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Volunteer registrations. Required: projectId (MongoDB ObjectId), volunteerName, volunteerEmail, registrationDate (YYYY-MM-DD), status (registered, confirmed, cancelled, completed)."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
+          }
+        }
+      }
+    },
+    "/registrations/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "MongoDB ObjectId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Registrations"
+        ],
+        "summary": "Get one registration",
+        "responses": {
+          "200": {
+            "description": "Record returned."
+          },
+          "400": {
+            "description": "Invalid ID."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Registrations"
+        ],
+        "summary": "Update registration",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Volunteer registrations. Required: projectId (MongoDB ObjectId), volunteerName, volunteerEmail, registrationDate (YYYY-MM-DD), status (registered, confirmed, cancelled, completed)."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Registrations"
+        ],
+        "summary": "Delete registration",
+        "security": [
+          {
+            "githubOAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted."
+          },
+          "401": {
+            "description": "GitHub login required."
+          },
+          "404": {
+            "description": "Not found."
           }
         }
       }
     }
   },
   "components": {
-    "parameters": {
-      "ObjectId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "MongoDB ObjectId.",
-        "schema": {
-          "type": "string",
-          "pattern": "^[a-fA-F0-9]{24}$",
-          "example": "66eb8c356c1344dcb86b1111"
-        }
-      }
-    },
-    "schemas": {
-      "ContactInput": {
-        "type": "object",
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "phone",
-          "favoriteColor",
-          "birthday",
-          "city"
-        ],
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "minLength": 2,
-            "example": "Grace"
-          },
-          "lastName": {
-            "type": "string",
-            "minLength": 2,
-            "example": "Nabirye"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "grace@example.com"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+256 700 123456"
-          },
-          "favoriteColor": {
-            "type": "string",
-            "example": "Purple"
-          },
-          "birthday": {
-            "type": "string",
-            "format": "date",
-            "example": "1999-04-15"
-          },
-          "city": {
-            "type": "string",
-            "example": "Kampala"
-          }
-        }
-      },
-      "Contact": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ContactInput"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "66eb8c356c1344dcb86b1111"
-              }
-            }
-          }
-        ]
-      },
-      "ProjectInput": {
-        "type": "object",
-        "required": [
-          "name",
-          "description",
-          "category",
-          "organization",
-          "location",
-          "startDate",
-          "status"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 3,
-            "example": "Community Park Cleanup"
-          },
-          "description": {
-            "type": "string",
-            "minLength": 10,
-            "example": "Volunteers clean and restore a neighborhood park."
-          },
-          "category": {
-            "type": "string",
-            "example": "Community Service"
-          },
-          "organization": {
-            "type": "string",
-            "example": "UnityServe Volunteers"
-          },
-          "location": {
-            "type": "string",
-            "example": "Kampala"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-10-10"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "planned",
-              "active",
-              "completed"
-            ],
-            "example": "planned"
-          }
-        }
-      },
-      "Project": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ProjectInput"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "66eb8c356c1344dcb86b2222"
-              }
-            }
-          }
-        ]
-      },
-      "CreateResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          }
-        }
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "responses": {
-      "BadRequest": {
-        "description": "Validation error or invalid ObjectId.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "Requested document was not found.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "ServerError": {
-        "description": "Server or database error.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      }
-    },
     "securitySchemes": {
-      "cookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "connect.sid",
-        "description": "Session cookie created after GitHub OAuth login. Open /auth/github in the same browser before using protected endpoints."
+      "githubOAuth": {
+        "type": "oauth2",
+        "description": "Sign in in the same browser session at /auth/github. Session authentication protects write operations.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "/auth/github",
+            "tokenUrl": "/auth/github/callback",
+            "scopes": {
+              "user:email": "Read GitHub email"
+            }
+          }
+        }
       }
     }
   }

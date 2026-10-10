@@ -1,15 +1,19 @@
 services:
   - type: web
-    name: cse341-w04-project2
+    name: cse341-community-service-connect
     runtime: node
+    plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /
     envVars:
-      - key: MONGODB_URI
-        sync: false
+      - key: NODE_ENV
+        value: production
       - key: DB_NAME
-        value: cse341_w04_project2
+        value: community_service_connect
       - key: SESSION_SECRET
+        sync: false
+      - key: MONGODB_URI
         sync: false
       - key: GITHUB_CLIENT_ID
         sync: false
@@ -17,5 +21,3 @@ services:
         sync: false
       - key: GITHUB_CALLBACK_URL
         sync: false
-      - key: NODE_ENV
-        value: production

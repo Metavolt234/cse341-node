@@ -1,5 +1,5 @@
 @local = http://localhost:3000
-@render = https://YOUR-APP.onrender.com
+@render = https://cse341-node-rse7.onrender.com
 @contactId = REPLACE_WITH_CONTACT_ID
 @projectId = REPLACE_WITH_PROJECT_ID
 

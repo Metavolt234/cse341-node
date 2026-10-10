@@ -19,6 +19,8 @@ async function connectDb() {
   return database;
 }
 
+function setDbForTests(db) { database = db; }
+
 function getDb() {
   if (!database) {
     throw new Error('Database has not been initialized.');
@@ -34,4 +36,4 @@ async function closeDb() {
   }
 }
 
-module.exports = { connectDb, getDb, closeDb };
+module.exports = { connectDb, getDb, closeDb, setDbForTests };

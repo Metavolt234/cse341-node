@@ -6,6 +6,8 @@ const { connectDb } = require('./db/connect');
 const { passport, configurePassport } = require('./auth');
 const contactsRoute = require('./routes/contacts');
 const projectsRoute = require('./routes/projects');
+const organizationsRoute = require('./routes/organizations');
+const registrationsRoute = require('./routes/registrations');
 const swaggerDocument = require('./swagger.json');
 
 const app = express();
@@ -34,7 +36,7 @@ app.use(passport.session());
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'CSE 341 Week 05 Final Project Part 1 API is running.',
-    collections: ['contacts', 'projects', 'users'],
+    collections: ['contacts', 'projects', 'organizations', 'registrations'],
     authentication: {
       login: '/auth/github',
       logout: '/auth/logout',
@@ -129,6 +131,8 @@ app.get('/auth/logout', (req, res, next) => {
 
 app.use('/contacts', contactsRoute);
 app.use('/projects', projectsRoute);
+app.use('/organizations', organizationsRoute);
+app.use('/registrations', registrationsRoute);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found.' });
@@ -154,6 +158,6 @@ async function startServer() {
   }
 }
 
-startServer();
+if (require.main === module) startServer();
 
 module.exports = app;

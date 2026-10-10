@@ -1,0 +1,33 @@
+{
+  "name": "cse341-w06-community-service-connect",
+  "version": "2.0.0",
+  "description": "CSE 341 Week 06 team API: four collections, CRUD, validation, GitHub OAuth, Swagger and GET endpoint unit tests.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "cse341",
+    "rest",
+    "crud",
+    "mongodb",
+    "express",
+    "swagger"
+  ],
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongodb": "^7.6.0",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12"
+  },
+  "devDependencies": {}
+}

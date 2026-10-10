@@ -1,0 +1,126 @@
+@local = http://localhost:3000
+@render = https://cse341-node-rse7.onrender.com
+@contactId = REPLACE_WITH_CONTACT_ID
+@projectId = REPLACE_WITH_PROJECT_ID
+
+### HOME & DOCS
+GET {{local}}/
+###
+GET {{local}}/swagger.json
+###
+GET {{local}}/api-docs
+
+### AUTH
+# Open this URL in a browser to sign in with GitHub.
+GET {{local}}/auth/github
+###
+GET {{local}}/auth/status
+###
+GET {{local}}/auth/logout
+
+### CONTACTS
+GET {{local}}/contacts
+###
+GET {{local}}/contacts/{{contactId}}
+###
+# Protected: must be logged in
+POST {{local}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Daniel",
+  "lastName": "Kato",
+  "email": "daniel.kato@example.com",
+  "phone": "+256 700 333333",
+  "favoriteColor": "Green",
+  "birthday": "2001-08-22",
+  "city": "Jinja"
+}
+###
+# Protected: must be logged in
+PUT {{local}}/contacts/{{contactId}}
+Content-Type: application/json
+
+{
+  "firstName": "Daniel",
+  "lastName": "Kato Updated",
+  "email": "daniel.updated@example.com",
+  "phone": "+256 700 333444",
+  "favoriteColor": "Orange",
+  "birthday": "2001-08-22",
+  "city": "Jinja"
+}
+###
+# Protected: must be logged in
+DELETE {{local}}/contacts/{{contactId}}
+
+### CONTACT VALIDATION
+POST {{local}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Bad",
+  "lastName": "Request",
+  "email": "not-an-email",
+  "phone": "1",
+  "favoriteColor": "Blue",
+  "birthday": "wrong-date",
+  "city": "Kampala"
+}
+
+### PROJECTS
+GET {{local}}/projects
+###
+GET {{local}}/projects/{{projectId}}
+###
+# Protected: must be logged in
+POST {{local}}/projects
+Content-Type: application/json
+
+{
+  "name": "Community Tutoring",
+  "description": "Volunteers provide after-school tutoring for students.",
+  "category": "Education & Tutoring",
+  "organization": "UnityServe Volunteers",
+  "location": "Kampala",
+  "startDate": "2026-11-01",
+  "status": "planned"
+}
+###
+# Protected: must be logged in
+PUT {{local}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "name": "Community Tutoring Updated",
+  "description": "Volunteers provide updated after-school tutoring sessions.",
+  "category": "Education & Tutoring",
+  "organization": "UnityServe Volunteers",
+  "location": "Kampala",
+  "startDate": "2026-11-05",
+  "status": "active"
+}
+###
+# Protected: must be logged in
+DELETE {{local}}/projects/{{projectId}}
+
+### PROJECT VALIDATION
+POST {{local}}/projects
+Content-Type: application/json
+
+{
+  "name": "No",
+  "description": "short",
+  "category": "Education",
+  "organization": "Test",
+  "location": "Kampala",
+  "startDate": "not-a-date",
+  "status": "unknown"
+}
+
+### RENDER
+GET {{render}}/contacts
+###
+GET {{render}}/projects
+###
+GET {{render}}/auth/status

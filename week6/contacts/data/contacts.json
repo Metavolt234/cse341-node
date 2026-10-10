@@ -1,0 +1,20 @@
+[
+  {
+    "firstName": "Nelson",
+    "lastName": "Tumwesige",
+    "email": "nelson.tumwesige@example.com",
+    "phone": "+256 700 111111",
+    "favoriteColor": "Blue",
+    "birthday": "2000-05-20",
+    "city": "Kampala"
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Nabirye",
+    "email": "grace.nabirye@example.com",
+    "phone": "+256 700 222222",
+    "favoriteColor": "Purple",
+    "birthday": "1999-04-15",
+    "city": "Entebbe"
+  }
+]

@@ -35,7 +35,7 @@ app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'CSE 341 Week 05 Final Project Part 1 API is running.',
+    message: 'CSE 341 Week 07 Community Service Connect API is running.',
     collections: ['contacts', 'projects', 'organizations', 'registrations'],
     authentication: {
       login: '/auth/github',
